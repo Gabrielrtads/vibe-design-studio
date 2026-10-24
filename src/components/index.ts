@@ -51,3 +51,6 @@ export type { CapcutMotionBlurProps, BlurDirection, MotionBlurParams, MotionBlur
 
 export { TikTokStyleCaptions, getActiveCaptionState } from './captions/TikTokStyleCaptions';
 export type { TikTokStyleCaptionsProps, TikTokCaptionVariant, WhisperWordItem, ActiveCaptionState } from './captions/TikTokStyleCaptions';
+
+export { CinematicLutGrade, blendGradeMatrix } from './effects/CinematicLutGrade';
+export type { CinematicLutGradeProps, CinematicGradePreset } from './effects/CinematicLutGrade';
