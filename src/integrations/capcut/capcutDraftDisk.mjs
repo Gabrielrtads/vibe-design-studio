@@ -114,8 +114,7 @@ export function saveCapcutDraftToDisk(params) {
 			enterprise_material: [],
 		},
 		draft_fold_path: forwardFoldPath,
-		draft_id: safeDraftId,
-		draft_uuid: draftUuid,
+		draft_id: draftUuid,
 		draft_is_ae_produce: false,
 		draft_is_ai_packaging_used: false,
 		draft_is_ai_shorts: false,
@@ -206,6 +205,69 @@ export function saveCapcutDraftToDisk(params) {
 		layoutOrientation: 1,
 	};
 	fs.writeFileSync(layoutPath, JSON.stringify(timelineLayout), 'utf8');
+
+	fs.writeFileSync(
+		path.join(draftFolder, 'attachment_pc_common.json'),
+		JSON.stringify({
+			ai_packaging_infos: [],
+			ai_packaging_report_info: {
+				caption_id_list: [],
+				commercial_material: '',
+				material_source: '',
+				method: '',
+				page_from: '',
+				style: '',
+				task_id: '',
+				text_style: '',
+				tos_id: '',
+				video_category: '',
+			},
+			broll: {
+				ai_packaging_infos: [],
+				ai_packaging_report_info: {
+					caption_id_list: [],
+					commercial_material: '',
+					material_source: '',
+					method: '',
+					page_from: '',
+					style: '',
+					task_id: '',
+					text_style: '',
+					tos_id: '',
+					video_category: '',
+				},
+			},
+			commercial_music_category_ids: [],
+			pc_feature_flag: 0,
+			recognize_tasks: [],
+			reference_lines_config: { horizontal_lines: [], is_lock: false, is_visible: false, vertical_lines: [] },
+			safe_area_type: 0,
+			template_item_infos: [],
+			unlock_template_ids: [],
+		}),
+		'utf8',
+	);
+
+	fs.writeFileSync(
+		path.join(draftFolder, 'draft_agency_config.json'),
+		JSON.stringify({
+			is_auto_agency_enabled: false,
+			is_auto_agency_popup: false,
+			is_single_agency_mode: false,
+			marterials: [{ cancel_in_global_mode: false, is_manual_disable: false, source_path: '', use_converter: true }],
+			use_converter: false,
+			video_resolution: 720,
+		}),
+		'utf8',
+	);
+
+	fs.writeFileSync(path.join(draftFolder, 'draft_biz_config.json'), '', 'utf8');
+	fs.writeFileSync(path.join(draftFolder, 'key_value.json'), '{}', 'utf8');
+	fs.writeFileSync(
+		path.join(draftFolder, 'performance_opt_info.json'),
+		JSON.stringify({ manual_cancle_precombine_segs: null, need_auto_precombine_segs: null }),
+		'utf8',
+	);
 
 	// Atualiza root_meta_info.json (índice da tela inicial do CapCut Desktop) com backup automático
 	const rootMetaPath = path.join(rootDir, 'root_meta_info.json');
