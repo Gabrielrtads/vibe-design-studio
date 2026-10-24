@@ -44,3 +44,10 @@ export * from './vox';
 
 // Estilos Edit.IA Absorvidos (Gancho Grande, Órbita Split, Capa de Revista, Onda de Áudio)
 export * from './editia';
+
+// CapCut Amazing-Engine Effects & TikTok Viral Kinetic Captions
+export { CapcutMotionBlur, computeMotionBlurVector } from './effects/CapcutMotionBlur';
+export type { CapcutMotionBlurProps, BlurDirection, MotionBlurParams, MotionBlurVector } from './effects/CapcutMotionBlur';
+
+export { TikTokStyleCaptions, getActiveCaptionState } from './captions/TikTokStyleCaptions';
+export type { TikTokStyleCaptionsProps, TikTokCaptionVariant, WhisperWordItem, ActiveCaptionState } from './captions/TikTokStyleCaptions';
