@@ -8,6 +8,7 @@ import {
   buildFreeSubtitlesTrack,
   buildRoughCutSegments,
   framesToMicroseconds,
+  sanitizeDraftForFreeExport,
   secondsToMicroseconds,
 } from '../../src/integrations/capcut/capcutExporter.ts';
 import {
@@ -117,4 +118,47 @@ test('buildCapcutDraftContent e saveCapcutDraftToDisk: gera schema v360000 váli
   } finally {
     fs.rmSync(tmpRoot, { recursive: true, force: true });
   }
+});
+
+test('sanitizeDraftForFreeExport: remove flags VIP/Pro e limpa function_assistant_info para exportação grátis', () => {
+  const dirtyDraft = {
+    materials: {
+      videos: [
+        {
+          id: 'V1',
+          pre_applied_vip_materials: ['vip_enhance_quality', 'vip_denoise'],
+          is_copyright: true,
+          formula_id: 'pro_lut_99',
+        },
+      ],
+      texts: [
+        {
+          id: 'T1',
+          pre_applied_vip_materials: ['vip_caption_template'],
+        },
+      ],
+    },
+    tracks: [
+      {
+        type: 'video',
+        segments: [{ id: 'S1', enable_color_adjust_pro: true }],
+      },
+    ],
+    function_assistant_info: {
+      auto_caption: true,
+      auto_caption_segid_list: ['S1', 'S2'],
+      enhande_voice: true,
+      enhance_voice_segid_list: ['S1'],
+    },
+  };
+
+  const report = sanitizeDraftForFreeExport(dirtyDraft);
+  assert.ok(report.cleanedFlagsCount >= 9);
+  assert.deepEqual(dirtyDraft.materials.videos[0].pre_applied_vip_materials, []);
+  assert.equal(dirtyDraft.materials.videos[0].is_copyright, false);
+  assert.equal(dirtyDraft.materials.videos[0].formula_id, '');
+  assert.deepEqual(dirtyDraft.materials.texts[0].pre_applied_vip_materials, []);
+  assert.equal(dirtyDraft.tracks[0].segments[0].enable_color_adjust_pro, false);
+  assert.equal(dirtyDraft.function_assistant_info.auto_caption, false);
+  assert.deepEqual(dirtyDraft.function_assistant_info.auto_caption_segid_list, []);
 });

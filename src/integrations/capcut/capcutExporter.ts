@@ -559,5 +559,124 @@ export function buildCapcutDraftContent(options: CapcutDraftOptions) {
 		path: '',
 		lyrics_effects: [],
 		draft_type: 'video',
+		function_assistant_info: createCleanFunctionAssistantInfo(),
+	};
+}
+
+export function createCleanFunctionAssistantInfo() {
+	return {
+		smart_rec_applied: false,
+		fixed_rec_applied: false,
+		auto_adjust: false,
+		auto_adjust_segid_list: [] as string[],
+		color_correction: false,
+		color_correction_segid_list: [] as string[],
+		enhance_quality: false,
+		smooth_slow_motion: false,
+		deflicker_segid_list: [] as string[],
+		video_noise_segid_list: [] as string[],
+		enhance_quality_segid_list: [] as string[],
+		smart_segid_list: [] as string[],
+		retouch: false,
+		retouch_segid_list: [] as string[],
+		enhande_voice: false,
+		enhance_voice_segid_list: [] as string[],
+		audio_noise_segid_list: [] as string[],
+		auto_caption: false,
+		auto_caption_segid_list: [] as string[],
+		auto_caption_template_id: '',
+		caption_opt: false,
+		caption_opt_segid_list: [] as string[],
+		eye_correction: false,
+		eye_correction_segid_list: [] as string[],
+		normalize_loudness: false,
+		normalize_loudness_segid_list: [] as string[],
+		normalize_loudness_audio_denoise_segid_list: [] as string[],
+		auto_adjust_fixed: false,
+		auto_adjust_fixed_value: 50.0,
+		color_correction_fixed: false,
+		color_correction_fixed_value: 50.0,
+		normalize_loudness_fixed: false,
+		enhande_voice_fixed: false,
+		retouch_fixed: false,
+		enhance_quality_fixed: false,
+		smooth_slow_motion_fixed: false,
+		fps: { num: 0, den: 1 },
+	};
+}
+
+/**
+ * Remove marcações e rastreadores de funções VIP/Pro (`pre_applied_vip_materials`,
+ * `enable_color_adjust_pro`, `function_assistant_info`, `is_copyright`) de um
+ * `draft_content.json` existente para liberar a exportação gratuita sem marca d'água.
+ */
+export function sanitizeDraftForFreeExport(draftContent: Record<string, unknown>): {
+	cleanedFlagsCount: number;
+	details: string[];
+} {
+	let cleanedFlagsCount = 0;
+	const details: string[] = [];
+
+	// 1. Limpar pre_applied_vip_materials e flags pagas em todas as coleções de materials
+	const materials = draftContent.materials as Record<string, unknown[]> | undefined;
+	if (materials && typeof materials === 'object') {
+		for (const [bucketName, list] of Object.entries(materials)) {
+			if (!Array.isArray(list)) continue;
+			for (const item of list) {
+				if (!item || typeof item !== 'object') continue;
+				const rec = item as Record<string, unknown>;
+				if (Array.isArray(rec.pre_applied_vip_materials) && rec.pre_applied_vip_materials.length > 0) {
+					cleanedFlagsCount += rec.pre_applied_vip_materials.length;
+					details.push(`materials.${bucketName}: removido pre_applied_vip_materials (${rec.pre_applied_vip_materials.length})`);
+					rec.pre_applied_vip_materials = [];
+				}
+				if (rec.is_copyright === true) {
+					cleanedFlagsCount += 1;
+					details.push(`materials.${bucketName}: is_copyright -> false`);
+					rec.is_copyright = false;
+				}
+				if (typeof rec.formula_id === 'string' && rec.formula_id.length > 0) {
+					cleanedFlagsCount += 1;
+					details.push(`materials.${bucketName}: formula_id limpo`);
+					rec.formula_id = '';
+				}
+			}
+		}
+	}
+
+	// 2. Limpar flags Pro nos segmentos das tracks
+	const tracks = draftContent.tracks as Array<Record<string, unknown>> | undefined;
+	if (Array.isArray(tracks)) {
+		for (const track of tracks) {
+			const segments = track.segments as Array<Record<string, unknown>> | undefined;
+			if (!Array.isArray(segments)) continue;
+			for (const seg of segments) {
+				if (seg.enable_color_adjust_pro === true) {
+					cleanedFlagsCount += 1;
+					details.push('segment: enable_color_adjust_pro -> false');
+					seg.enable_color_adjust_pro = false;
+				}
+			}
+		}
+	}
+
+	// 3. Limpar listas de rastreamento de recursos Pro em function_assistant_info
+	const fa = draftContent.function_assistant_info as Record<string, unknown> | undefined;
+	if (fa && typeof fa === 'object') {
+		for (const [k, v] of Object.entries(fa)) {
+			if (Array.isArray(v) && v.length > 0) {
+				cleanedFlagsCount += v.length;
+				details.push(`function_assistant_info.${k}: limpo (${v.length} itens)`);
+			} else if (typeof v === 'boolean' && v === true) {
+				cleanedFlagsCount += 1;
+				details.push(`function_assistant_info.${k}: true -> false`);
+			}
+		}
+	}
+	draftContent.function_assistant_info = createCleanFunctionAssistantInfo();
+
+	return {
+		cleanedFlagsCount,
+		details,
 	};
 }

@@ -26,6 +26,7 @@ import {
 	buildCapcutDraftContent,
 	buildFreeSubtitlesTrack,
 	buildRoughCutSegments,
+	sanitizeDraftForFreeExport,
 } from '../integrations/capcut/capcutExporter.ts';
 import {
 	resolveDefaultCapcutDraftRoot,
@@ -200,6 +201,25 @@ export const CAPCUT_MCP_TOOLS = [
 				dryRun: { type: 'boolean', description: 'Valida sem modificar a timeline (padrão true para segurança).' },
 			},
 			required: ['assetId'],
+		},
+	},
+	{
+		name: 'capcut_unlock_free_export',
+		description:
+			'Limpa travas e marcações VIP/Pro (pre_applied_vip_materials, enable_color_adjust_pro, function_assistant_info e purchase_info) de um projeto existente do CapCut para permitir exportação 100% gratuita sem cadeado Pro.',
+		inputSchema: {
+			type: 'object',
+			properties: {
+				draftId: {
+					type: 'string',
+					description: 'ID da pasta do projeto no CapCut (ex: 1017 ou Vibe_Kage_Bunshin_IA).',
+				},
+				draftRootDir: {
+					type: 'string',
+					description: 'Diretório raiz opcional dos drafts.',
+				},
+			},
+			required: ['draftId'],
 		},
 	},
 ];
@@ -449,6 +469,45 @@ async function handleToolCall(name, args = {}) {
 			argv,
 			queueTimeoutMs: 15000,
 		});
+	}
+
+	if (name === 'capcut_unlock_free_export') {
+		const safeId = String(args.draftId || '').replace(/[^A-Za-z0-9_-]/g, '_');
+		const draftFolder = path.join(rootDir, safeId);
+		const contentPath = path.join(draftFolder, 'draft_content.json');
+		const metaPath = path.join(draftFolder, 'draft_meta_info.json');
+		if (!fs.existsSync(contentPath)) {
+			throw new Error(`Projeto CapCut não encontrado para destravamento Pro: ${safeId}`);
+		}
+
+		// Backup seguro antes de limpar flags VIP
+		const backupPath = `${contentPath}.bak`;
+		fs.copyFileSync(contentPath, backupPath);
+
+		const content = JSON.parse(fs.readFileSync(contentPath, 'utf8'));
+		const report = sanitizeDraftForFreeExport(content);
+		fs.writeFileSync(contentPath, JSON.stringify(content, null, 2), 'utf8');
+
+		if (fs.existsSync(metaPath)) {
+			try {
+				fs.copyFileSync(metaPath, `${metaPath}.bak`);
+				const meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+				meta.draft_cloud_capcut_purchase_info = '';
+				meta.draft_cloud_purchase_info = '';
+				meta.draft_cloud_videocut_purchase_info = '';
+				fs.writeFileSync(metaPath, JSON.stringify(meta), 'utf8');
+			} catch {
+				// preserva meta se não for JSON válido
+			}
+		}
+
+		return {
+			ok: true,
+			draftId: safeId,
+			cleanedFlagsCount: report.cleanedFlagsCount,
+			details: report.details,
+			backupPath,
+		};
 	}
 
 	throw new Error(`Ferramenta desconhecida: ${name}`);

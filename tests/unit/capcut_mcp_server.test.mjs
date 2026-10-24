@@ -83,6 +83,7 @@ test('capcut-mcp-server: handshake JSON-RPC 2.0, ignora notificações e lista a
     'capcut_auto_rough_cut',
     'capcut_live_control',
     'capcut_timeline_add_draft',
+    'capcut_unlock_free_export',
   ]);
 });
 
@@ -135,6 +136,15 @@ test('capcut-mcp-server: cria, lista, inspeciona e aplica auto-cut em projeto Ca
             arguments: { draftId: 'projeto-kage-01' },
           },
         },
+        {
+          jsonrpc: '2.0',
+          id: 13,
+          method: 'tools/call',
+          params: {
+            name: 'capcut_unlock_free_export',
+            arguments: { draftId: 'projeto-kage-01' },
+          },
+        },
       ],
       { CAPCUT_DRAFT_ROOT: tmpDraftRoot }
     );
@@ -152,6 +162,10 @@ test('capcut-mcp-server: cria, lista, inspeciona e aplica auto-cut em projeto Ca
     assert.equal(inspected.ok, true);
     assert.equal(inspected.videoSegmentsCount, 2);
     assert.equal(inspected.subtitleSegmentsCount, 1);
+
+    const unlocked = JSON.parse(responses[3].result.content[0].text);
+    assert.equal(unlocked.ok, true);
+    assert.equal(unlocked.draftId, 'projeto-kage-01');
   } finally {
     fs.rmSync(tmpDraftRoot, { recursive: true, force: true });
   }
