@@ -232,10 +232,17 @@ export function buildCapcutDraftContent(options: CapcutDraftOptions) {
 
 	const videoMaterials = [];
 	const videoSegments = [];
+	const speedMaterials = [];
+	const canvasMaterials = [];
+	const placeholderInfoMaterials = [];
+	const soundChannelMappings = [];
+	const materialColors = [];
+	const vocalSeparations = [];
 	let timelineCursorUs = 0;
 
 	for (const clip of options.videoClips) {
 		const matId = generateUuid();
+		const localMatId = generateUuid().toLowerCase();
 		const normalizedPath = clip.path.replace(/\\/g, '/');
 		const ranges: SpeechRange[] =
 			clip.speechRanges && clip.speechRanges.length > 0
@@ -247,14 +254,20 @@ export function buildCapcutDraftContent(options: CapcutDraftOptions) {
 
 		videoMaterials.push({
 			id: matId,
+			local_material_id: localMatId,
 			unique_id: generateUuid().replace(/-/g, '').toLowerCase(),
 			type: 'video',
 			duration: sourceDurationUs,
 			path: normalizedPath,
+			media_path: '',
+			local_id: '',
+			material_id: '',
 			material_name: baseName(normalizedPath),
+			material_url: '',
 			width: clip.width ?? width,
 			height: clip.height ?? height,
 			has_audio: true,
+			category_id: '',
 			category_name: 'local',
 			crop_ratio: 'free',
 			crop_scale: 1.0,
@@ -268,6 +281,9 @@ export function buildCapcutDraftContent(options: CapcutDraftOptions) {
 				lower_right_x: 1.0,
 				lower_right_y: 1.0,
 			},
+			extra_type_option: 0,
+			source: 0,
+			source_platform: 0,
 			check_flag: 62978047,
 			pre_applied_vip_materials: [] as string[],
 		});
@@ -279,6 +295,80 @@ export function buildCapcutDraftContent(options: CapcutDraftOptions) {
 			volume: clip.volume ?? 1.0,
 			speed: clip.speed ?? 1.0,
 		});
+
+		for (const seg of cut.segments) {
+			const speedId = generateUuid();
+			const placeholderId = generateUuid();
+			const canvasId = generateUuid();
+			const soundMapId = generateUuid();
+			const matColorId = generateUuid();
+			const vocalSepId = generateUuid();
+
+			speedMaterials.push({
+				id: speedId,
+				type: 'speed',
+				mode: 0,
+				speed: clip.speed ?? 1.0,
+				curve_speed: null,
+			});
+			placeholderInfoMaterials.push({
+				id: placeholderId,
+				type: 'placeholder_info',
+				meta_type: 'none',
+				res_path: '',
+				res_text: '',
+				error_path: '',
+				error_text: '',
+			});
+			canvasMaterials.push({
+				id: canvasId,
+				type: 'canvas_color',
+				color: '',
+				blur: 0.0,
+				image: '',
+				album_image: '',
+				image_id: '',
+				image_name: '',
+				source_platform: 0,
+				team_id: '',
+			});
+			soundChannelMappings.push({
+				id: soundMapId,
+				type: '',
+				audio_channel_mapping: 0,
+				is_config_open: false,
+			});
+			materialColors.push({
+				id: matColorId,
+				is_color_clip: false,
+				is_gradient: false,
+				solid_color: '',
+				gradient_colors: [],
+				gradient_percents: [],
+				gradient_angle: 90.0,
+				width: 0.0,
+				height: 0.0,
+			});
+			vocalSeparations.push({
+				id: vocalSepId,
+				type: 'vocal_separation',
+				choice: 0,
+				removed_sounds: [],
+				time_range: null,
+				production_path: '',
+				final_algorithm: '',
+				enter_from: '',
+			});
+
+			(seg as { extra_material_refs: string[] }).extra_material_refs = [
+				speedId,
+				placeholderId,
+				canvasId,
+				soundMapId,
+				matColorId,
+				vocalSepId,
+			];
+		}
 
 		videoSegments.push(...cut.segments);
 		timelineCursorUs += cut.totalDurationUs;
@@ -357,9 +447,31 @@ export function buildCapcutDraftContent(options: CapcutDraftOptions) {
 		color_space: 0,
 		config: {
 			video_mute: false,
-			maintrack_adsorb: true,
+			record_audio_last_index: 1,
+			extract_audio_last_index: 1,
+			original_sound_last_index: 1,
+			subtitle_recognition_id: '',
+			subtitle_taskinfo: [],
+			lyrics_recognition_id: '',
+			lyrics_taskinfo: [],
 			subtitle_sync: true,
 			lyrics_sync: true,
+			voice_change_sync: false,
+			sticker_max_index: 1,
+			adjust_max_index: 1,
+			material_save_mode: 0,
+			export_range: null,
+			maintrack_adsorb: true,
+			combination_max_index: 1,
+			attachment_info: [],
+			zoom_info_params: null,
+			system_font_list: [],
+			multi_language_mode: 'none',
+			multi_language_main: 'none',
+			multi_language_current: 'none',
+			multi_language_list: [],
+			subtitle_keywords_config: null,
+			use_float_render: false,
 		},
 		canvas_config: {
 			ratio: width < height ? '9:16' : 'original',
@@ -368,15 +480,84 @@ export function buildCapcutDraftContent(options: CapcutDraftOptions) {
 			background: null,
 		},
 		tracks,
+		group_container: null,
 		materials: {
 			flowers: [],
 			videos: videoMaterials,
+			tail_leaders: [],
 			audios: audioMaterials,
+			images: [],
 			texts: textMaterials,
-			speeds: [],
-			canvases: [],
+			effects: [],
+			stickers: [],
+			canvases: canvasMaterials,
 			transitions: [],
+			audio_effects: [],
+			audio_fades: [],
+			beats: [],
+			material_animations: [],
+			placeholders: [],
+			placeholder_infos: placeholderInfoMaterials,
+			speeds: speedMaterials,
+			common_mask: [],
+			chromas: [],
+			text_templates: [],
+			realtime_denoises: [],
+			audio_pannings: [],
+			audio_pitch_shifts: [],
+			video_trackings: [],
+			hsl: [],
+			drafts: [],
+			color_curves: [],
+			hsl_curves: [],
+			primary_color_wheels: [],
+			log_color_wheels: [],
+			video_effects: [],
+			ai_text_effects: [],
+			audio_balances: [],
+			handwrites: [],
+			manual_deformations: [],
+			manual_beautys: [],
+			plugin_effects: [],
+			sound_channel_mappings: soundChannelMappings,
+			green_screens: [],
+			shapes: [],
+			material_colors: materialColors,
+			digital_humans: [],
+			digital_human_model_dressing: [],
+			smart_crops: [],
+			ai_translates: [],
+			audio_track_indexes: [],
+			loudnesses: [],
+			vocal_beautifys: [],
+			vocal_separations: vocalSeparations,
+			smart_relights: [],
+			time_marks: [],
+			multi_language_refs: [],
+			video_shadows: [],
+			video_strokes: [],
+			video_radius: [],
+		},
+		keyframes: {
+			videos: [],
+			audios: [],
+			texts: [],
+			stickers: [],
+			filters: [],
+			adjusts: [],
+			handwrites: [],
 			effects: [],
 		},
+		keyframe_graph_list: [],
+		relationships: [],
+		mixed_track_mode_on: false,
+		render_index_track_mode_on: true,
+		free_render_index_mode_on: false,
+		static_cover_image_path: '',
+		source: 'default',
+		time_marks: null,
+		path: '',
+		lyrics_effects: [],
+		draft_type: 'video',
 	};
 }

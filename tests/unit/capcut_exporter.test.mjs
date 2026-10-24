@@ -98,6 +98,12 @@ test('buildCapcutDraftContent e saveCapcutDraftToDisk: gera schema v360000 váli
     });
     assert.ok(fs.existsSync(firstSave.contentPath));
     assert.ok(fs.existsSync(firstSave.metaPath));
+    assert.equal(firstSave.rootMetaUpdated, true);
+    assert.ok(fs.existsSync(firstSave.rootMetaPath));
+
+    const rootMeta = JSON.parse(fs.readFileSync(firstSave.rootMetaPath, 'utf8'));
+    assert.ok(Array.isArray(rootMeta.all_draft_store));
+    assert.equal(rootMeta.all_draft_store[0].draft_name, 'Vibe_Kage_Bunshin_Reel');
 
     // Segunda gravação deve preservar backup .bak
     const secondSave = saveCapcutDraftToDisk({
@@ -107,6 +113,7 @@ test('buildCapcutDraftContent e saveCapcutDraftToDisk: gera schema v360000 váli
       content: draft,
     });
     assert.ok(fs.existsSync(secondSave.backupPath), 'deve criar draft_content.json.bak ao sobrescrever');
+    assert.ok(fs.existsSync(path.join(tmpRoot, 'root_meta_info.json.bak')), 'deve criar root_meta_info.json.bak');
   } finally {
     fs.rmSync(tmpRoot, { recursive: true, force: true });
   }
