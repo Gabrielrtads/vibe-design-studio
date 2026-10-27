@@ -1,6 +1,9 @@
 ---
 name: vibe-design-studio
-description: Headless motion studio for AI agents (Remotion). One command, `pnpm vibe`, produces reels from a script, reels from the user's own recording (silence cut, Hormozi captions, -14 LUFS), static 4:5 carousels as PNG and narration-free motion graphics, and refuses to call a result done until it is measured. Use it when the user asks for a reel, TikTok, Short, carousel, motion graphics or video captions.
+version: 1.1.0
+category: creative
+description: "Headless creative & motion design studio for AI agents (Remotion, React 18, Whisper, EBU R128). Produces high-end reels from scripts or raw recordings (silence cutting, word-level Hormozi captions, -14 LUFS audio mastering), 4:5 editorial carousels as PNGs, and kinetic motion graphics with physical spring easing curves. Refuses to call a result done until visually and audibly measured. Trigger with /vibe, /video, /reel, /carrossel, /motion, 'criar video', 'gerar reel', 'legendar video', 'fazer carrossel', or 'motion design'."
+tags: [vibe-design-studio, remotion, ai-video, motion-graphics, video-generation, reels, tiktok, youtube-shorts, carousels, captions, hormozi-captions, whisper, ebu-r128, silence-cutting, react-video, vibe-coding, creative, claude-code, codex, antigravity]
 ---
 
 # Vibe Design Studio, for agents

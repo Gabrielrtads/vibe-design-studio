@@ -1,19 +1,24 @@
-# Vibe Design Studio 🎨🎬
-
-[![GitHub stars](https://img.shields.io/github/stars/Gabrielrtads/vibe-design-studio?style=social)](https://github.com/Gabrielrtads/vibe-design-studio/stargazers)
-
-> ⭐ **If this tool saved you time or empowered your AI agents, please star this repository! It helps more developers discover the project.**
+# 🎨🎬 Vibe Design Studio
 
 > **The Headless Creative & Motion Design Studio for AI Agents.**  
-> Deterministic Code, Anti-Slop Linters, Physical Easing Curves & Dynamic Sound Design for [Claude Code](https://github.com/anthropics/claude-code), [OpenAI Codex](https://github.com/openai/codex), [Google Antigravity](https://github.com/google/antigravity), and [Remotion](https://www.remotion.dev).
+> *(Generate agency-grade reels, Hormozi captions, carousels, and motion graphics with zero AI slop, physical spring physics & EBU R128 audio).*
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Remotion](https://img.shields.io/badge/Remotion-v4.0-blueviolet)](https://www.remotion.dev)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue)](https://www.typescriptlang.org)
-[![React](https://img.shields.io/badge/React-18-61dafb)](https://react.dev)
-[![EBU R128 Mastered](https://img.shields.io/badge/Audio-EBU%20R128%20--14%20LUFS-red)](#-sound-design--audio-mastering-suite)
-[![AI Agent Ready](https://img.shields.io/badge/AI%20Agent-Skill%20Ready-green)](#-agent-integration)
-[![Zero Media Bloat](https://img.shields.io/badge/Zero%20Media%20Bloat-Pure%20Knowledge%20%26%20Code-orange)](#-zero-media-bloat-philosophy)
+[![skills.sh compatible](https://img.shields.io/badge/skills.sh-vibe--design--studio-6366f1?style=for-the-badge)](https://skills.sh)
+[![Remotion v4](https://img.shields.io/badge/Remotion-v4.0-blueviolet?style=for-the-badge)](https://www.remotion.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue?style=for-the-badge)](https://www.typescriptlang.org)
+[![Audio EBU R128](https://img.shields.io/badge/Audio-EBU_R128_--14_LUFS-crimson?style=for-the-badge)](#-sound-design--audio-mastering-suite)
+[![Vibe Coding](https://img.shields.io/badge/Vibe_Coding-100%25_Ready-ff007f?style=for-the-badge)](#)
+[![Multi-Agent](https://img.shields.io/badge/AI_Agents-Claude_|_Codex_|_Antigravity-purple?style=for-the-badge)](#)
+[![License: MIT](https://img.shields.io/badge/License-MIT-emerald.svg?style=for-the-badge)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/Gabrielrtads/vibe-design-studio?style=social)](https://github.com/Gabrielrtads/vibe-design-studio/stargazers)
+
+```bash
+# ⚡ 1-Click Install via skills.sh (Claude Code / Codex / Antigravity):
+npx skills add Gabrielrtads/vibe-design-studio
+
+# Or generate a vertical reel directly from a script:
+pnpm vibe roteiro "Seu roteiro aqui" --vertical --voz thalita --estilo escuro-tech
+```
 
 ---
 
@@ -352,3 +357,22 @@ vibe-design-studio/
 ## 📜 License
 
 [MIT](LICENSE) © 2026 [Gabriel Toledo](https://github.com/Gabrielrtads)
+
+---
+
+<div align="center">
+
+### ⭐ Impressed with Vibe Design Studio?
+If this studio saved your agents from AI slop or helped you produce high-end motion graphics, please star the repository!  
+It helps other autonomous agent developers discover the project.
+
+[![Star on GitHub](https://img.shields.io/github/stars/Gabrielrtads/vibe-design-studio?style=social)](https://github.com/Gabrielrtads/vibe-design-studio/stargazers)
+
+---
+
+**Built with pride by [Gabriel Toledo (@Gabrielrtads)](https://github.com/Gabrielrtads)**  
+*Creator of [Barber.fi](https://painel.barberfi.com.br), `sta`, `kage-bunshin`, and `agent-log`.*
+
+Licensed under [MIT](LICENSE).
+
+</div>
