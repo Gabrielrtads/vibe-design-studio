@@ -1,0 +1,2 @@
+# Hooks do Git rodam em sh: precisam de quebra de linha LF em qualquer sistema.
+.githooks/* text eol=lf
