@@ -1,0 +1,4 @@
+#!/bin/sh
+# Versionado em .githooks e ativado por `git config core.hooksPath .githooks`.
+# Trava de segredos (gitleaks): barra push de commits com senha, token ou chave.
+exec sh "$(dirname "$0")/segredos.sh" push "$1"
